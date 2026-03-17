@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+        .env
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:4040"
+    environment:
+      - DATABASE_NAME=subscribe_db
+      - DATABASE_USER=admin
+      - DATABASE_PASSWORD=adminpassword
+      - DATABASE_HOST=db
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
