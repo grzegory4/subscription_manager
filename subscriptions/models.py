@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from django.utils import timezone
+from datetime import timedelta
 
 class Category(models.Model):
     """categories dictionary"""
@@ -39,3 +41,12 @@ class Subscription(models.Model):
     def __str__(self):
         return f"{self.name} - {self.user.username}"
 
+    def monthly_cost(self):
+        if self.billing_cycle == "monthly":
+            return self.price
+        return round(self.price / 12, 2)
+
+    def next_billing_date(self):
+        if self.billing_cycle == "monthly":
+            return self.start_date + timedelta(days = 30)
+        return self.start_date + timedelta(days = 365)

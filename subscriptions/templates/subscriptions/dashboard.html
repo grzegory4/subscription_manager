@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Subskrypcji</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 40px;
+            background: #f4f4f4;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .total {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>Witaj, {{ user.username }}!</h1>
+        <p class="total">Łączny miesięczny koszt: {{ total_monthly }} PLN</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Usługa</th>
+                    <th>Koszt (mies.)</th>
+                    <th>Następna płatność</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in subscriptions %}
+                <tr>
+                    <td>{{ sub.name }}</td>
+                    <td>{{ sub.monthly_cost }} {{ sub.currency }}</td>
+                    <td>{{ sub.next_billing_date|date:"d.m.Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
