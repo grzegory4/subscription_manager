@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.utils import timezone
+import datetime
 from datetime import timedelta
 
 class Category(models.Model):
@@ -50,3 +51,19 @@ class Subscription(models.Model):
         if self.billing_cycle == "monthly":
             return self.start_date + timedelta(days = 30)
         return self.start_date + timedelta(days = 365)
+    
+    @property
+    # returns number of days till next payment
+    def days_until_payment(self):
+        next_date = self.next_billing_date()
+        if isinstance(next_date, datetime.datetime):
+            next_date = next_date.date()
+
+        delta = next_date - timezone.now().date()
+        return delta.days
+    
+    @property
+    # returns True if payment will be made in the next 3 days
+    def is_urgent(self):
+        days = self.days_until_payment
+        return 0 <= days <= 3
