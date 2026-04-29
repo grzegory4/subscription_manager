@@ -13,7 +13,17 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue')
-    }
+    },
+    {
+      path: '/add',
+      name: 'add-subscription',
+      component: () => import('../views/AddSubscriptionView.vue')
+    },
+    {
+      path: '/edit/:id',
+      name: 'edit-subscription',
+      component: () => import('../views/EditSubscriptionView.vue')
+    },
   ]
 })
 

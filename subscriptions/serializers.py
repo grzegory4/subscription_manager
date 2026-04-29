@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Subscription
+from .models import Subscription, Category
 from django.contrib.auth.models import User
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -21,4 +21,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
-    
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('id', 'name',)
