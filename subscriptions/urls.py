@@ -10,4 +10,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('register/', views.RegisterView.as_view(), name='auth_register'),
+    path('stats/', views.SubscriptionStatsView.as_view(), name='subscription-stats'),
 ]

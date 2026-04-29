@@ -3,13 +3,20 @@ from .models import Subscription, Category
 from django.contrib.auth.models import User
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    days_until_payment = serializers.ReadOnlyField()
+
     class Meta:
         model = Subscription
-        fields = '__all__'
+        fields = [
+            'id', 'name', 'price', 'currency', 'billing_cycle', 
+            'start_date', 'category', 'is_active', 'next_billing_date', 
+            'days_until_payment'
+        ]
         read_only_fields = ['user']
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = ('username', 'password', 'email')
@@ -23,6 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 class CategorySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Category
         fields = ('id', 'name',)

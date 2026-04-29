@@ -6,6 +6,15 @@
     <h1>Twoje Subskrypcje</h1>
     <div v-if="loading">Ładowanie...</div>
     <div v-else>
+      <div class="stats-container" v-if="stats">
+        <div class="stat-card">
+          <h3>Miesięcznie: {{ stats.total_monthly_cost }} PLN</h3>
+        </div>
+        
+        <div class="chart-wrapper">
+          <Pie v-if="chartData.datasets[0].data.length" :data="chartData" />
+        </div>
+    </div>
       <table v-if="subscriptions.length">
         <thead>
           <tr>
@@ -25,6 +34,13 @@
               </router-link>
               <button @click="deleteSub(sub.id)" style="color: red">Usuń</button>
             </td>
+            <td>
+              {{ sub.next_billing_date }}
+              <br>
+              <span :class="getStatusClass(sub.days_until_payment)">
+                {{ getStatusText(sub.days_until_payment) }}
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -35,8 +51,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { Pie } from 'vue-chartjs';
 import axios from 'axios';
 import { useAuthStore } from '../stores/auth';
+import { ArcElement, Legend, Tooltip, Chart as ChartJS, } from 'chart.js';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+const stats = ref(null);
+const chartData = ref({
+  labels: [],
+  datasets: [{ data: [], backgroudColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'] }]
+});
 
 const subscriptions = ref([]);
 const loading = ref(true);
@@ -44,14 +69,27 @@ const auth = useAuthStore();
 
 onMounted(async () => {
   try {
-    const response = await axios.get('/api/subscriptions/', {
-      headers: {
-        Authorization: `Bearer ${auth.token}`
-      }
-    });
-    subscriptions.value = response.data;
+    const subRes = await axios.get('/api/subscriptions/');
+    subscriptions.value = subRes.data;
+
+    const statsRes = await axios.get('/api/stats/');
+    stats.value = statsRes.data;
+
+    if (statsRes.data.category_distribution.length > 0) {
+      chartData.value = {
+        labels: statsRes.data.category_distribution.map(item => item.category__name),
+        datasets: [{
+          data: statsRes.data.category_distribution.map(item => item.total),
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#C9CBCF']
+        }]
+      };
+    }
   } catch (error) {
-    console.error("Błąd pobierania danych", error);
+    console.error("Błąd pobierania danych z API:", error);
+    // Jeśli dostaniesz 401, możesz tu dodać przekierowanie do logowania
+    if (error.response?.status === 401) {
+      router.push('/login');
+    }
   } finally {
     loading.value = false;
   }
@@ -69,6 +107,17 @@ const deleteSub = async (id) => {
     }
   }
 };
+const getStatusText = (days) => {
+  if (days < 0) return "Termin minął!";
+  if (days === 0) return "Płatność dzisiaj!";
+  if (days === 1) return "Płatność jutro!";
+  return `Za ${days} dni`;
+};
+
+const getStatusClass = (days) => {
+  if (days <= 3) return 'text-danger fw-bold'; // Czerwony dla bliskich terminów
+  return 'text-muted'; // Szary dla odległych
+};
 </script>
 
 <style scoped>
@@ -85,4 +134,7 @@ th { background-color: #f2f2f2; }
   margin-bottom: 20px;
   cursor: pointer;
 }
+.urgent { color: red; font-weight: bold; }
+.text-danger { color: #d9534f; font-weight: bold; }
+.text-muted { color: #6c757d; font-size: 0.85em; }
 </style>
