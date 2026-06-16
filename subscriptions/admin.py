@@ -9,7 +9,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'price', 'currency', 'billing_cycle', 'start_date', 'is_active',)
+    list_display = ('name', 'user', 'price', 'billing_cycle', 'start_date', 'is_active',)
     list_filter = ('is_active', 'billing_cycle', 'category', 'user',)
     search_fields = ('name', 'user__username',)
     ordering = ('-start_date',)

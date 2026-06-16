@@ -1,9 +1,10 @@
 from rest_framework import serializers
-from .models import Subscription, Category
+from .models import Subscription, Category, Profile
 from django.contrib.auth.models import User
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     days_until_payment = serializers.ReadOnlyField()
+    currency = serializers.CharField(source='price_currency')
 
     class Meta:
         model = Subscription
@@ -34,3 +35,12 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name',)
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('default_currency',)
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)

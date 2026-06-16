@@ -5,6 +5,10 @@ from decimal import Decimal
 from django.utils import timezone
 import datetime
 from datetime import timedelta
+from djmoney.models.fields import MoneyField
+from djmoney.money import Money
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Category(models.Model):
     """categories dictionary"""
@@ -15,6 +19,22 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    default_currency = models.CharField(max_length=3, default='PLN')
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.get_or_create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
 
 class Subscription(models.Model):
     """user main subscription entry"""
@@ -30,8 +50,7 @@ class Subscription(models.Model):
 
     # basic data
     name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
-    currency = models.CharField(max_length=3, default="PLN")
+    price = MoneyField(max_digits=14, decimal_places=2, default_currency='PLN')
     billing_cycle = models.CharField(max_length=10, choices=BillingCycle.choices, default=BillingCycle.MONTHLY)
 
     # dates and states
@@ -42,10 +61,35 @@ class Subscription(models.Model):
     def __str__(self):
         return f"{self.name} - {self.user.username}"
 
+    def convert_to_currency(self, amount, target_currency='PLN'):
+        """Simple currency conversion for stats"""
+        if not amount:
+            return Decimal('0.00')
+            
+        source_currency = str(amount.currency)
+        target_currency = str(target_currency)
+        
+        if source_currency == target_currency:
+            return amount.amount
+        
+        # Approximate rates relative to PLN
+        rates_to_pln = {
+            'PLN': Decimal('1.00'),
+            'USD': Decimal('4.00'),
+            'EUR': Decimal('4.30'),
+        }
+        
+        pln_value = amount.amount * rates_to_pln.get(source_currency, Decimal('1.00'))
+        target_value = pln_value / rates_to_pln.get(target_currency, Decimal('1.00'))
+        
+        return target_value
+
     def monthly_cost(self):
+        if not self.price:
+            return Money(0, 'PLN')
         if self.billing_cycle == "monthly":
             return self.price
-        return round(self.price / 12, 2)
+        return self.price / 12
 
     def next_billing_date(self):
         if self.billing_cycle == "monthly":

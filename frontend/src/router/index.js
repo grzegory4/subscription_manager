@@ -1,13 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LoginView from '../views/LoginView.vue'
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: () => import('../views/LoginView.vue')
     },
     {
       path: '/dashboard',
@@ -24,7 +22,45 @@ const router = createRouter({
       name: 'edit-subscription',
       component: () => import('../views/EditSubscriptionView.vue')
     },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue')
+    },
+    {
+      path: '/',
+      name: 'app-page',
+      component: () => import('../views/AppPageView.vue')
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/SettingsView.vue')
+    },
+    {
+      path: '/reset-password',
+      name: 'reset-password',
+      component: () => import('../views/ResetPasswordView.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../views/NotFoundView.vue')
+    },
   ]
 })
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token');
 
+  const publicPages = ['login', 'register', 'app-page', 'reset-password'];
+  const authRequired = !publicPages.includes(to.name);
+
+  if (authRequired && !isAuthenticated) {
+    next({ name: 'login' });
+  } else if (to.name === 'login' && isAuthenticated) {
+    next({ name: 'dashboard' });
+  } else {
+    next();
+  }
+});
 export default router

@@ -1,32 +1,178 @@
 <template>
-  <div class="container">
-    <h1>Dodaj nową subskrypcję</h1>
-    <form @submit.prevent="handleSubmit" class="sub-form">
-      <input v-model="form.name" type="text" placeholder="Nazwa usługi (np. Netflix)" required />
-      <input v-model="form.price" type="number" step="0.01" min="0" placeholder="Cena" required />
-      <select v-model="form.currency">
-        <option value="PLN">PLN</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-      <select v-model="form.billing_cycle">
-        <option value="monthly">Miesięcznie</option>
-        <option value="yearly">Rocznie</option>
-      </select>
-      <label>Kategoria:</label>
-        <select v-model="form.category" required>
-        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-            {{ cat.name }}
-        </option>
-        </select>
-      <input v-model="form.start_date" type="date" required />
+  <div class="grow flex items-center justify-center py-12 px-4"> 
+    
+    <div class="bg-indigo-900 w-full max-w-lg flex flex-col rounded-3xl p-8 text-white shadow-3xl border border-indigo-800">
       
-      <input v-model="form.category" type="number" placeholder="ID Kategorii" required />
+      <div class="mb-8 text-center">
+        <h1 class="text-3xl font-bold tracking-tight">Nowa subskrypcja</h1>
+      </div>
 
-      <button type="submit" :disabled="loading">
-        {{ loading ? 'Dodawanie...' : 'Dodaj subskrypcję' }}
-      </button>
-    </form>
+      <form @submit.prevent="handleSubmit" class="w-full flex flex-col">
+        
+        <label class="ml-4 mb-1 text-sm text-indigo-300">Nazwa usługi</label>
+        <div class="relative mb-6">
+          <i class="pi pi-tag absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 z-10"></i>
+          <input 
+            v-model="form.name" 
+            type="text" 
+            placeholder="np. Disney+, Spotify" 
+            required 
+            class="rounded-3xl bg-indigo-950 w-full p-4 pl-12 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 transition-all border border-transparent shadow-inner" 
+          />
+        </div>
+
+        <div class="flex gap-4 mb-6">
+          <div class="grow">
+            <label class="ml-4 mb-1 text-sm text-indigo-300">Kwota</label>
+            <div class="relative">
+              <i class="pi pi-money-bill absolute left-4 top-5.5 text-indigo-400 z-10"></i>
+              <InputNumber v-model="form.price" mode="decimal" :minFractionDigits="2" :maxFractionDigits="2" :min="0" showButtons buttonLayout="stacked"
+                class="w-full"
+                :pt="{
+                  pcInputText: {
+                    root: { class: 'rounded-3xl bg-indigo-950 w-full p-4 pl-12 pr-16 border-none focus:ring-[5px] focus:ring-indigo-500 transition-all shadow-inner' }
+                  },
+                  buttonGroup: { class: 'p-1 text-gray-400' },
+                  incrementButton: { class: 'hover:text-indigo-400 transition-colors' },
+                  decrementButton: { class: 'hover:text-indigo-400 transition-colors' }
+                }"
+              />
+            </div>
+          </div>
+          <div class="w-1/3">
+            <label class="ml-4 mb-1 text-sm text-indigo-300">Waluta</label>
+              <Select v-model="form.currency" :options="['PLN', 'USD', 'EUR']" class="w-full"
+                :pt="{
+                  root: { class: `rounded-3xl bg-indigo-950 w-full p-1 transition-all border border-transparent focus-within:ring-[5px] focus-within:ring-indigo-500 shadow-inner` },
+                  label: { class: 'text-white p-3 pl-5' },
+                  dropdown: { class: 'pr-4' },
+                  overlay: { class: 'bg-indigo-950 border border-indigo-500/30 shadow-2xl rounded-2xl mt-1 overflow-hidden' },
+                  list: { class: 'p-2' },
+                  option: ({ context }) => ({
+                    class: [
+                      'p-3 rounded-xl transition-all cursor-pointer mb-1',
+                      context.focused ? 'bg-indigo-800' : '',
+                      context.selected ? 'bg-indigo-600' : '',
+                    ]
+                  })
+                }" 
+              />
+          </div>
+        </div>
+
+        <label class="ml-4 mb-1 text-sm text-indigo-300">Cykl rozliczeniowy</label>
+        <div class="relative">
+          <i class="pi pi-calendar-clock absolute left-4 top-5.5 text-indigo-400 z-10"></i>
+          <Select v-model="form.billing_cycle" :options="[{label: 'Miesięcznie', value: 'monthly'}, {label: 'Rocznie', value: 'yearly'}]" optionLabel="label" optionValue="value" placeholder="Wybierz cykl" class="mb-5"
+            :pt="{
+              root: { class: `rounded-3xl bg-indigo-950 w-full p-1 pl-7 transition-all border border-transparent focus-within:ring-[5px] focus-within:ring-indigo-500 shadow-inner` },
+              label: { class: 'text-white p-3 pl-5' },
+              dropdown: { class: 'pr-4' },
+              overlay: { class: 'bg-indigo-950 border border-indigo-500/30 shadow-2xl rounded-2xl mt-1 overflow-hidden' },
+              list: { class: 'p-2' },
+              option: ({ context }) => ({
+                class: [
+                  'p-3 rounded-xl transition-all cursor-pointer mb-1',
+                  context.focused ? 'bg-indigo-800 text-white' : 'text-indigo-100',
+                  context.selected ? '!bg-indigo-600 !text-white font-bold' : 'hover:bg-indigo-900'
+                ]
+                })
+              }" 
+            />
+        </div>
+        <label class="ml-4 mb-1 text-sm text-indigo-300">Pierwsza płatność</label>
+        <div class="relative mb-6">
+          <i class="pi pi-calendar absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 z-10 pointer-events-none"></i>
+          <DatePicker v-model="form.start_date" dateFormat="dd/mm/yy" class="w-full"
+              :pt="{
+                  pcInputText: { 
+                      root: { class: 'rounded-3xl bg-indigo-950 w-full p-4 pl-12 text-white border-none focus:ring-[5px] focus:ring-indigo-500 transition-all shadow-inner' } 
+                  },
+                  inputIcon: {
+                    class: 'absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-400'
+                  },
+                  panel: { 
+                      class: 'bg-indigo-950 border border-indigo-500/30 text-white shadow-2xl rounded-3xl p-4' 
+                  },
+                  header: { 
+                      class: 'bg-transparent text-white border-b border-indigo-800/50 pb-4 mb-2 flex items-center justify-between' 
+                  },  
+                  title: { class: 'font-bold' },
+                  day: ({ context }) => ({
+                    class: [
+                        'flex items-center justify-center p-0',
+                        'w-10 h-10 rounded-full transition-all duration-300 text-sm',
+                        context.selected ? '!bg-indigo-500 text-white font-bold' : '',
+                        !context.selected ? 'hover:bg-indigo-800/50' : '',
+                        context.today ? 'bg-indigo-950 border-[3px] border-indigo-500/50' : '',
+                        context.otherMonth ? 'text-gray-400' : '',
+                      ]
+                    }),
+                  month: ({ context }) => ({
+                    class: [
+                        'hover:bg-indigo-800/50 text-sm p-2 rounded-xl transition-all',
+                        context.selected ? 'bg-indigo-500 text-white font-bold' : '',
+                      ]
+                    }),
+                  year: ({ context }) => ({
+                    class: [
+                        'hover:bg-indigo-800/50 text-sm p-2 rounded-xl transition-all',
+                        context.selected ? 'bg-indigo-500 text-white font-bold' : '',
+                      ]
+                    }),
+              }">
+            </DatePicker>
+        </div>
+  
+        <label class="ml-4 mb-1 text-sm text-indigo-300">Kategoria</label>
+        <div class="relative">
+          <i class="pi pi-hashtag absolute left-4 top-5.5 text-indigo-400 z-10"></i>
+          <Select 
+            v-model="form.category" 
+            :options="categories" 
+            optionLabel="name" 
+            optionValue="id" 
+            placeholder="Wybierz kategorię"
+            required 
+            class="w-full mb-8"
+            :pt="{
+              root: ({ state }) => ({ 
+                class: [
+                  'rounded-3xl bg-indigo-950 w-full p-1 pl-7 transition-all border outline-none shadow-inner',
+                  state.focused 
+                    ? 'border-indigo-500 ring-[5px] ring-indigo-500/50' 
+                    : 'border-transparent'
+                ]
+              }),
+              label: { class: 'text-white p-3 pl-5 focus:outline-none' },
+              dropdown: { class: 'pr-4' },
+              overlay: { class: 'bg-indigo-950 border border-indigo-500/30 shadow-2xl rounded-2xl mt-1 overflow-hidden' },
+              list: { class: 'p-2' },
+              option: ({ context }) => ({
+                class: [
+                  'p-3 rounded-xl transition-all cursor-pointer mb-1',
+                  context.focused ? 'bg-indigo-800 text-white' : 'text-indigo-100',
+                  context.selected ? '!bg-indigo-600 !text-white font-bold' : 'hover:bg-indigo-900'
+                ]
+              })
+            }" 
+          />
+        </div>
+        <div class="flex flex-col gap-3">
+          <button type="submit" :disabled="loading"
+            class="bg-indigo-600 rounded-2xl py-4 w-full text-xl font-bold hover:bg-indigo-500 transition duration-300 shadow-lg shadow-indigo-500/20 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3">
+            <i v-if="loading" class="pi pi-spin pi-spinner text-xl"></i>
+            {{ loading ? 'Dodawanie...' : 'Dodaj subskrypcję' }}
+          </button>
+          
+          <button type="button" @click="$router.push('/dashboard')" 
+            class="bg-transparent border border-indigo-700 rounded-2xl py-3 w-full text-sm font-medium hover:bg-indigo-800 transition duration-300 text-indigo-300 text-center">
+            Wróć do listy
+          </button>
+        </div>
+      </form>
+      
+    </div>
   </div>
 </template>
 
@@ -35,28 +181,40 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
+import DatePicker from 'primevue/datepicker';
+import InputNumber from 'primevue/inputnumber';
 
 const router = useRouter();
 const auth = useAuthStore();
 const loading = ref(false);
-const categories = ref([]); // Tu wylądują kategorie z bazy
+const categories = ref([]);
 
 const form = ref({
   name: '',
   price: '',
   currency: 'PLN',
   billing_cycle: 'monthly',
-  start_date: new Date().toISOString().substr(0, 10),
-  category: '' // Zmieniamy na pusty ciąg na start
+  start_date: new Date(),
+  category: ''
 });
 
-// Pobieramy kategorie z API po załadowaniu komponentu
 onMounted(async () => {
+  if (auth.userProfile?.default_currency) {
+    form.value.currency = auth.userProfile.default_currency;
+  } else {
+    await auth.fetchProfile();
+    if (auth.userProfile?.default_currency) {
+      form.value.currency = auth.userProfile.default_currency;
+    }
+  }
+
   try {
-    const response = await axios.get('/api/categories/');
+    const response = await axios.get('/api/categories/', {
+      headers: { Authorization: `Bearer ${auth.token}` }
+    });
     categories.value = response.data;
     if (categories.value.length > 0) {
-        form.value.category = categories.value[0].id; // Ustaw domyślnie pierwszą
+        form.value.category = categories.value[0].id;
     }
   } catch (error) {
     console.error("Nie udało się pobrać kategorii", error);
@@ -66,12 +224,19 @@ onMounted(async () => {
 const handleSubmit = async () => {
   loading.value = true;
   try {
-    await axios.post('/api/subscriptions/', form.value, {
+    const payload = {
+      ...form.value,
+      start_date: form.value.start_date instanceof Date 
+                  ? form.value.start_date.toISOString().split('T')[0] 
+                  : form.value.start_date
+    };
+
+    await axios.post('/api/subscriptions/', payload, {
       headers: { Authorization: `Bearer ${auth.token}` }
     });
     router.push('/dashboard');
   } catch (error) {
-    alert("Błąd: " + JSON.stringify(error.response?.data));
+    console.error("Błąd zapisu:", error.response?.data);
   } finally {
     loading.value = false;
   }
@@ -79,7 +244,9 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-.sub-form { display: flex; flex-direction: column; gap: 10px; max-width: 400px; }
-input, select, button { padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
-button { background: #28a745; color: white; cursor: pointer; }
+@import "primeicons/primeicons.css";
+
+.shadow-inner {
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+}
 </style>
