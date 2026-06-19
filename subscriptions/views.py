@@ -69,13 +69,13 @@ class SubscriptionStatsView(APIView):
         profile, created = Profile.objects.get_or_create(user=user)
         target_currency = profile.default_currency
         
-        # Debugging
+        # debugging
         print(f"DEBUG: Found {subscriptions.count()} active subscriptions for user {user.username}. Target currency: {target_currency}")
 
         try:
             total_monthly = sum(sub.convert_to_currency(sub.monthly_cost(), target_currency) for sub in subscriptions)
             
-            # Yearly cost calculation
+            # yearly cost calculation
             total_yearly = 0
             for sub in subscriptions:
                 if sub.billing_cycle == 'yearly':
@@ -83,7 +83,7 @@ class SubscriptionStatsView(APIView):
                 else:
                     total_yearly += sub.convert_to_currency(sub.price, target_currency) * 12
 
-            # Calculate category distribution in target currency
+            # calculate category distribution in target currency
             category_map = {}
             for sub in subscriptions:
                 cat_name = sub.category.name if sub.category else "Brak kategorii"

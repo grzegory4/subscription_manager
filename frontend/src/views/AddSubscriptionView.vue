@@ -17,7 +17,7 @@
             type="text" 
             placeholder="np. Disney+, Spotify" 
             required 
-            class="rounded-3xl bg-indigo-950 w-full p-4 pl-12 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 transition-all border border-transparent shadow-inner" 
+            class="rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50" 
           />
         </div>
 
@@ -30,7 +30,7 @@
                 class="w-full"
                 :pt="{
                   pcInputText: {
-                    root: { class: 'rounded-3xl bg-indigo-950 w-full p-4 pl-12 pr-16 border-none focus:ring-[5px] focus:ring-indigo-500 transition-all shadow-inner' }
+                    root: { class: 'rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50' }
                   },
                   buttonGroup: { class: 'p-1 text-gray-400' },
                   incrementButton: { class: 'hover:text-indigo-400 transition-colors' },
@@ -43,7 +43,7 @@
             <label class="ml-4 mb-1 text-sm text-indigo-300">Waluta</label>
               <Select v-model="form.currency" :options="['PLN', 'USD', 'EUR']" class="w-full"
                 :pt="{
-                  root: { class: `rounded-3xl bg-indigo-950 w-full p-1 transition-all border border-transparent focus-within:ring-[5px] focus-within:ring-indigo-500 shadow-inner` },
+                  root: { class: `rounded-3xl bg-indigo-950 w-full p-1 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50` },
                   label: { class: 'text-white p-3 pl-5' },
                   dropdown: { class: 'pr-4' },
                   overlay: { class: 'bg-indigo-950 border border-indigo-500/30 shadow-2xl rounded-2xl mt-1 overflow-hidden' },
@@ -65,7 +65,7 @@
           <i class="pi pi-calendar-clock absolute left-4 top-5.5 text-indigo-400 z-10"></i>
           <Select v-model="form.billing_cycle" :options="[{label: 'Miesięcznie', value: 'monthly'}, {label: 'Rocznie', value: 'yearly'}]" optionLabel="label" optionValue="value" placeholder="Wybierz cykl" class="mb-5"
             :pt="{
-              root: { class: `rounded-3xl bg-indigo-950 w-full p-1 pl-7 transition-all border border-transparent focus-within:ring-[5px] focus-within:ring-indigo-500 shadow-inner` },
+              root: { class: `rounded-3xl bg-indigo-950 w-full py-1 pl-7 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50` },
               label: { class: 'text-white p-3 pl-5' },
               dropdown: { class: 'pr-4' },
               overlay: { class: 'bg-indigo-950 border border-indigo-500/30 shadow-2xl rounded-2xl mt-1 overflow-hidden' },
@@ -80,13 +80,14 @@
               }" 
             />
         </div>
-        <label class="ml-4 mb-1 text-sm text-indigo-300">Pierwsza płatność</label>
+
+         <label class="ml-4 mb-1 text-sm text-indigo-300">Pierwsza płatność</label>
         <div class="relative mb-6">
           <i class="pi pi-calendar absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 z-10 pointer-events-none"></i>
           <DatePicker v-model="form.start_date" dateFormat="dd/mm/yy" class="w-full"
               :pt="{
                   pcInputText: { 
-                      root: { class: 'rounded-3xl bg-indigo-950 w-full p-4 pl-12 text-white border-none focus:ring-[5px] focus:ring-indigo-500 transition-all shadow-inner' } 
+                      root: { class: 'rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50' } 
                   },
                   inputIcon: {
                     class: 'absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-400'
@@ -123,7 +124,66 @@
               }">
             </DatePicker>
         </div>
-  
+
+        <div class="flex justify-between">
+
+          <div class="flex items-center gap-3 mb-3">
+            <input 
+              type="checkbox" 
+              id="is_trial" 
+              v-model="showTrialDate"
+              class="w-6 h-6 rounded-xl bg-indigo-950 border border-indigo-700/50 checked:bg-indigo-600 checked:border-indigo-500 focus:ring-4 focus:ring-indigo-500/30 text-indigo-600 transition-all cursor-pointer appearance-none"
+            >
+            <label for="is_trial" class="text-sm text-indigo-300 cursor-pointer">Okres próbny</label>
+          </div>
+          
+          <div class="relative mb-6 transition-all duration-300" :class="{'opacity-40 grayscale-[0.5] pointer-events-none': !showTrialDate}">
+            <label class="ml-4 mb-1 text-sm text-indigo-300">Koniec okresu próbnego</label>
+            <div class="relative">
+                <i class="pi pi-clock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 z-10 pointer-events-none"></i>
+                <DatePicker v-model="form.trial_ends_at" dateFormat="dd/mm/yy" class="w-full" :disabled="!showTrialDate"
+                :pt="{
+                  pcInputText: { 
+                    root: { class: 'rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50' } 
+                  },
+                  inputIcon: {
+                    class: 'absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-indigo-400'
+                  },
+                  panel: { 
+                    class: 'bg-indigo-950 border border-indigo-500/30 text-white shadow-2xl rounded-3xl p-4' 
+                  },
+                  header: { 
+                    class: 'bg-transparent text-white border-b border-indigo-800/50 pb-4 mb-2 flex items-center justify-between' 
+                  },  
+                  title: { class: 'font-bold' },
+                  day: ({ context }) => ({
+                    class: [
+                      'flex items-center justify-center p-0',
+                      'w-10 h-10 rounded-full transition-all duration-300 text-sm',
+                      context.selected ? '!bg-indigo-500 text-white font-bold' : '',
+                      !context.selected ? 'hover:bg-indigo-800/50' : '',
+                      context.today ? 'bg-indigo-950 border-[3px] border-indigo-500/50' : '',
+                      context.otherMonth ? 'text-gray-400' : '',
+                    ]
+                  }),
+                  month: ({ context }) => ({
+                    class: [
+                      'hover:bg-indigo-800/50 text-sm p-2 rounded-xl transition-all',
+                      context.selected ? 'bg-indigo-500 text-white font-bold' : '',
+                    ]
+                  }),
+                  year: ({ context }) => ({
+                    class: [
+                      'hover:bg-indigo-800/50 text-sm p-2 rounded-xl transition-all',
+                      context.selected ? 'bg-indigo-500 text-white font-bold' : '',
+                    ]
+                  }),
+                }">
+              </DatePicker>
+            </div>
+          </div>
+        </div>
+        
         <label class="ml-4 mb-1 text-sm text-indigo-300">Kategoria</label>
         <div class="relative">
           <i class="pi pi-hashtag absolute left-4 top-5.5 text-indigo-400 z-10"></i>
@@ -138,7 +198,7 @@
             :pt="{
               root: ({ state }) => ({ 
                 class: [
-                  'rounded-3xl bg-indigo-950 w-full p-1 pl-7 transition-all border outline-none shadow-inner',
+                  'rounded-3xl bg-indigo-950 w-full py-1 pl-7 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50',
                   state.focused 
                     ? 'border-indigo-500 ring-[5px] ring-indigo-500/50' 
                     : 'border-transparent'
@@ -188,6 +248,7 @@ const router = useRouter();
 const auth = useAuthStore();
 const loading = ref(false);
 const categories = ref([]);
+const showTrialDate = ref(false);
 
 const form = ref({
   name: '',
@@ -195,6 +256,7 @@ const form = ref({
   currency: 'PLN',
   billing_cycle: 'monthly',
   start_date: new Date(),
+  trial_ends_at: null,
   category: ''
 });
 
@@ -228,7 +290,12 @@ const handleSubmit = async () => {
       ...form.value,
       start_date: form.value.start_date instanceof Date 
                   ? form.value.start_date.toISOString().split('T')[0] 
-                  : form.value.start_date
+                  : form.value.start_date,
+      trial_ends_at: (showTrialDate.value && form.value.trial_ends_at)
+                  ? (form.value.trial_ends_at instanceof Date 
+                      ? form.value.trial_ends_at.toISOString().split('T')[0] 
+                      : form.value.trial_ends_at)
+                  : null
     };
 
     await axios.post('/api/subscriptions/', payload, {

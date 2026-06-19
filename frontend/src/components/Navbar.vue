@@ -1,12 +1,10 @@
 <template>
-  <nav class="bg-indigo-950/80 backdrop-blur-md border-b border-indigo-800/50 px-4 md:px-8 py-4 flex items-center justify-between shadow-2xl sticky top-0 z-[100]">
+  <nav class="bg-indigo-950/80 backdrop-blur-md border-b border-indigo-800/50 px-4 md:px-8 py-4 flex items-center justify-between shadow-2xl sticky top-0 z-100">
       
       <router-link :to="{ name: auth.isAuthenticated ? 'dashboard' : 'app-page' }" 
-        class="group flex items-center gap-2 text-2xl font-black tracking-tighter text-white hover:text-indigo-200 transition-all duration-500">
-        <div class="bg-indigo-600 group-hover:bg-indigo-700 py-2 px-3 rounded-xl group-hover:rotate-12 group-hover:scale-110 transition-all duration-500 shadow-lg shadow-indigo-600/20">
-          <i class="pi pi-wallet text-xl"></i>
-        </div>
-        <span>SubManager</span>
+        class="group flex items-center gap-2 text-2xl font-black tracking-tighter text-white">
+        <img src="../assets/favicon.svg" alt="" class="w-8 h-8 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110">
+        <span class="transition-transform duration-500 group-hover:translate-x-1">SubManager</span>
       </router-link>
 
       <div class="flex items-center gap-1 md:gap-3">

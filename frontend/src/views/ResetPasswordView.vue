@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex items-center justify-center ">
     
-    <div class="bg-indigo-900 w-full max-w-lg flex flex-col rounded-3xl p-8 text-white shadow-2xl border border-indigo-800">
+    <div class="rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50">
       
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold mb-2">Resetuj hasło</h1>

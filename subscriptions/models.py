@@ -55,6 +55,7 @@ class Subscription(models.Model):
 
     # dates and states
     start_date = models.DateField()
+    trial_ends_at = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -72,7 +73,7 @@ class Subscription(models.Model):
         if source_currency == target_currency:
             return amount.amount
         
-        # Approximate rates relative to PLN
+        # approximate rates relative to PLN
         rates_to_pln = {
             'PLN': Decimal('1.00'),
             'USD': Decimal('4.00'),
@@ -92,9 +93,23 @@ class Subscription(models.Model):
         return self.price / 12
 
     def next_billing_date(self):
+        today = timezone.now().date()
+        
+        # if there is a trial and it hasn't ended yet
+        if self.trial_ends_at and self.trial_ends_at >= today:
+            return self.trial_ends_at
+            
+        base_date = self.trial_ends_at if self.trial_ends_at else self.start_date
+        
         if self.billing_cycle == "monthly":
-            return self.start_date + timedelta(days = 30)
-        return self.start_date + timedelta(days = 365)
+            return base_date + timedelta(days = 30)
+        return base_date + timedelta(days = 365)
+    
+    @property
+    def is_trial(self):
+        if not self.trial_ends_at:
+            return False
+        return self.trial_ends_at >= timezone.now().date()
     
     @property
     # returns number of days till next payment

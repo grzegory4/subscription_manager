@@ -10,8 +10,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = [
             'id', 'name', 'price', 'currency', 'billing_cycle', 
-            'start_date', 'category', 'is_active', 'next_billing_date', 
-            'days_until_payment'
+            'start_date', 'trial_ends_at', 'category', 'is_active', 
+            'next_billing_date', 'days_until_payment', 'is_trial'
         ]
         read_only_fields = ['user']
 

@@ -24,7 +24,7 @@
             type="text" 
             placeholder="uzytkownik123" 
             required 
-            class="rounded-3xl bg-indigo-950 w-full p-4 pl-12 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 transition-all border border-transparent shadow-inner" 
+            class="rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50" 
           />
         </div>
 
@@ -36,7 +36,7 @@
             type="email" 
             placeholder="adres@email.com" 
             required 
-            class="rounded-3xl bg-indigo-950 w-full p-4 pl-12 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 transition-all border border-transparent shadow-inner" 
+            class="rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50" 
           />
         </div>
 
@@ -87,7 +87,7 @@
             :type="showPassword ? 'text' : 'password'" 
             placeholder="••••••••" 
             required 
-            class="rounded-3xl bg-indigo-950 w-full p-4 pl-12 pr-12 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 transition-all border border-transparent shadow-inner" 
+            class="rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50" 
           />
           <button 
             type="button" 
@@ -123,7 +123,7 @@
             :type="showPassword ? 'text' : 'password'" 
             placeholder="••••••••" 
             required 
-            class="rounded-3xl bg-indigo-950 w-full p-4 pl-12 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 transition-all border border-transparent shadow-inner"
+            class="rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50"
             :class="{'focus:ring-red-500 border-red-900/50': form.confirmPassword && !passwordsMatch}" 
           />
         </div>

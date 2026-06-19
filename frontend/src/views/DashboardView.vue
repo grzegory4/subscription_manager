@@ -54,7 +54,10 @@
             class="bg-indigo-900 border border-indigo-800 p-6 rounded-3xl shadow-lg hover:border-indigo-500 transition-all group">
             <div class="flex justify-between items-start mb-4">
               <div>
-                <h3 class="text-xl font-bold group-hover:text-indigo-300 transition-colors">{{ sub.name }}</h3>
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="text-xl font-bold group-hover:text-indigo-300 transition-colors">{{ sub.name }}</h3>
+                  <span v-if="sub.is_trial" class="bg-indigo-500/30 text-indigo-300 text-[10px] font-black px-2 py-0.5 rounded-full border border-indigo-500/50 tracking-widest">TRIAL</span>
+                </div>
                 <span class="text-xs text-indigo-400 uppercase font-semibold tracking-tighter">
                   {{ translateBillingCycle(sub.billing_cycle) }}
                 </span>
@@ -69,8 +72,8 @@
                 <span class="text-indigo-500">Następna płatność:</span>
                 <span class="font-mono">{{ sub.next_billing_date }}</span>
               </div>
-              <div class="mt-2 text-sm font-bold" :class="getStatusClass(sub.days_until_payment)">
-                <i class="pi pi-clock mr-1 text-[10px]"></i> {{ getStatusText(sub.days_until_payment) }}
+              <div class="mt-2 text-sm font-bold" :class="getStatusClass(sub.days_until_payment, sub.is_trial)">
+                <i class="pi pi-clock mr-1 text-[10px]"></i> {{ getStatusText(sub.days_until_payment, sub.is_trial) }}
               </div>
             </div>
 
@@ -234,15 +237,21 @@ const executeDelete = async () => {
   }
 };
 
-const getStatusText = (days) => {
+const getStatusText = (days, isTrial = false) => {
   if (days === undefined || days === null) return "Obliczanie...";
+  if (isTrial) {
+    if (days < 0) return "Okres próbny zakończony";
+    if (days === 0) return "Trial kończy się dzisiaj!";
+    return `Trial jeszcze przez ${days} dni`;
+  }
   if (days < 0) return "Termin minął";
   if (days === 0) return "Płatność dzisiaj!";
   if (days === 1) return "Płatność jutro!";
   return `Za ${days} dni`;
 };
 
-const getStatusClass = (days) => {
+const getStatusClass = (days, isTrial = false) => {
+  if (isTrial && days >= 0) return 'text-indigo-400';
   if (days < 0) return 'text-red-400';
   if (days <= 3) return 'text-orange-400';
   return 'text-emerald-400';

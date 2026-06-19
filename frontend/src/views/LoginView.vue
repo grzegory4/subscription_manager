@@ -24,19 +24,19 @@
             type="text" 
             placeholder="Wpisz login" 
             required 
-            class="rounded-3xl bg-indigo-950 w-full p-4 pl-12 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 transition-all border border-transparent" 
+            class="rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50" 
           />
-        </div>
+          </div>
 
-        <label class="ml-4 mb-1 text-sm text-indigo-300">Hasło</label>
-        <div class="relative mb-8">
+          <label class="ml-4 mb-1 text-sm text-indigo-300">Hasło</label>
+          <div class="relative mb-8">
           <i class="pi pi-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400"></i>
           <input 
             v-model="password" 
             :type="showPassword ? 'text' : 'password'" 
             placeholder="••••••••" 
             required 
-            class="rounded-3xl bg-indigo-950 w-full p-4 pl-12 pr-12 focus:outline-none focus:ring-[5px] focus:ring-indigo-500 transition-all border border-transparent" 
+            class="rounded-3xl bg-indigo-950 w-full py-4 pl-12 focus:outline-none transition-all border border-indigo-800 focus-within:ring-[5px] focus-within:ring-indigo-500/50" 
           />
           <button 
             type="button" 
@@ -124,7 +124,7 @@ const handleLogin = async () => {
 <style scoped>
 @import "primeicons/primeicons.css";
 
-.bg-indigo-950 {
+.shadow-inner {
   box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 </style>

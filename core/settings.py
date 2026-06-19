@@ -46,18 +46,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'djmoney',
     'djmoney.contrib.exchange',
+    'drf_spectacular',
 ]
 
 # django-money settings
 CURRENCIES = ('PLN', 'USD', 'EUR')
 DEFAULT_CURRENCY = 'PLN'
 
-# Exchange rates settings (using a simple backend for now)
-# For production, you'd want to use 'djmoney.contrib.exchange.backends.OpenExchangeRatesBackend'
 EXCHANGE_BACKEND = 'djmoney.contrib.exchange.backends.FixerBackend' 
-# Actually, since I don't have API keys, I'll recommend a simple way to handle conversion in code 
-# or use a backend that doesn't strictly require one if possible, but most do.
-# Let's just enable the app for now and I'll handle conversion in the views if needed.
 
 
 MIDDLEWARE = [
@@ -160,7 +156,16 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Subscription Manager API',
+    'DESCRIPTION': 'API for managing user subscriptions',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
 
 
